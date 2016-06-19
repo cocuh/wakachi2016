@@ -1,0 +1,7 @@
+[package]
+name = "wakachi"
+version = "0.1.0"
+authors = ["Kosuke Kusano <cocuh.kk@gmail.com>"]
+
+[dependencies]
+nickel = "*"
