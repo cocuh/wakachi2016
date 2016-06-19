@@ -5,3 +5,5 @@ authors = ["Kosuke Kusano <cocuh.kk@gmail.com>"]
 
 [dependencies]
 nickel = "*"
+rustc-serialize = "*"
+mecab = "*"
