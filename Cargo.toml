@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["Kosuke Kusano <cocuh.kk@gmail.com>"]
 
 [dependencies]
-nickel = "*"
+nickel = "0.8.1"
 rustc-serialize = "*"
 mecab = "*"
+hyper = "0.8"

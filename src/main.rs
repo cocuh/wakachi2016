@@ -8,6 +8,9 @@ use rustc_serialize::json;
 
 extern crate mecab;
 
+extern crate hyper;
+use hyper::header::AccessControlAllowOrigin;
+
 
 #[derive(RustcDecodable, RustcEncodable, Debug)]
 struct QueryResponse {
@@ -49,14 +52,14 @@ impl Document {
         let mut tagger = mecab::Tagger::new("");
         let mut result = Vec::new();
         let input :&str = &self.body.clone();
-        for node in tagger.parse_to_node(input).iter_next() {
+        for (id,node) in tagger.parse_to_node(input).iter_next().enumerate() {
             match node.stat as i32 {
                 mecab::MECAB_BOS_NODE => {
                 }
                 mecab::MECAB_EOS_NODE => {
                 }
                 _ => {
-                    match Word::from_node(node) {
+                    match Word::from_node(id, node) {
                         Some(word) => {
                             result.push(word)
                         }
@@ -81,6 +84,7 @@ fn get_with_default<T:Clone>(vec :&Vec<T>, idx: usize, default: T) -> T{
 
 #[derive(RustcDecodable, RustcEncodable, Debug)]
 struct Word {
+    id: usize,
     tango: String,
     yomi: String,
     hinshi: String,
@@ -88,7 +92,7 @@ struct Word {
 }
 
 impl Word {
-    fn from_node(node: mecab::Node) -> Option<Word> {
+    fn from_node(id: usize, node: mecab::Node) -> Option<Word> {
         let tango = &(node.surface)[..node.length as usize];
         let feature = node.feature.split(",").collect::<Vec<_>>();
 
@@ -97,6 +101,7 @@ impl Word {
         let kihonkei = get_with_default(&feature, 6, "");
 
         let word = Word {
+            id: id,
             tango: String::from(tango),
             yomi: String::from(yomi),
             hinshi: String::from(hinshi),
@@ -115,12 +120,14 @@ fn main() {
     server.post("/query", middleware! { |req, mut res|
         let doc = req.json_as::<Document>().unwrap();
 
+        res.set(AccessControlAllowOrigin::Any);
         res.set(nickel::mimes::MediaType::Json);
 
         let result = match doc.run_mecab() {
             Ok(v) => QueryResponse::ok(v),
             Err(_) => QueryResponse::error("mecab run"),
         };
+
 
         json::encode(&result).unwrap()
     });
