@@ -1,8 +1,7 @@
-use std::collections::HashMap;
-
 #[macro_use]
 extern crate nickel;
 use nickel::{Nickel, HttpRouter, JsonBody, StaticFilesHandler};
+use nickel::extensions::Redirect;
 
 extern crate rustc_serialize;
 use rustc_serialize::json;
@@ -92,7 +91,6 @@ impl Word {
     fn from_node(node: mecab::Node) -> Option<Word> {
         let tango = &(node.surface)[..node.length as usize];
         let feature = node.feature.split(",").collect::<Vec<_>>();
-        println!("{} {}", tango, node.feature);
 
         let hinshi = get_with_default(&feature, 0, "");
         let yomi = get_with_default(&feature, 7, "");
@@ -112,7 +110,7 @@ impl Word {
 fn main() {
     let mut server = Nickel::new();
 
-    server.utilize(StaticFilesHandler::new("asserts/"));
+    server.utilize(StaticFilesHandler::new("dist/"));
 
     server.post("/query", middleware! { |req, mut res|
         let doc = req.json_as::<Document>().unwrap();
@@ -128,9 +126,7 @@ fn main() {
     });
 
     server.get("/", middleware! { |_, res|
-        let mut data = HashMap::new();
-        data.insert("data", "こくさんのおいしいおにく");
-        return res.render("templates/main.tpl", &data);
+        return res.redirect("/index.html")
     });
 
     server.get("/debug", middleware! { |_, res|
