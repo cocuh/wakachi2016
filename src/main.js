@@ -128,20 +128,6 @@ class App extends React.Component {
         super();
         this.state = {
             value: default_string, words: [
-                {
-                    hinshi: "名詞",
-                    yomi: "ようじょ",
-                    kihonkei: "ようじょりあん",
-                    tango: "幼女",
-                    id: 1
-                },
-                {
-                    hinshi: "女子",
-                    yomi: "は",
-                    kihonkei: "は",
-                    tango: "は",
-                    id: 2
-                }
             ]
         };
         this.handleSubmit = this.handleSubmit.bind(this);

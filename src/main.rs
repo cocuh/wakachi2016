@@ -19,6 +19,7 @@ struct QueryResponse {
     msg: String,
 }
 
+
 impl QueryResponse {
     fn ok(data: Vec<Word>) -> QueryResponse {
         QueryResponse {
@@ -49,6 +50,9 @@ impl Document {
     }
 
     fn run_mecab(&self) -> Result<Vec<Word>, String> {
+        if self.body.len() >= 512 {
+            return Err("too long");
+        }
         let mut tagger = mecab::Tagger::new("");
         let mut result = Vec::new();
         let input :&str = &self.body.clone();
@@ -120,12 +124,12 @@ fn main() {
     server.post("/query", middleware! { |req, mut res|
         let doc = req.json_as::<Document>().unwrap();
 
-        res.set(AccessControlAllowOrigin::Any);
+        //res.set(AccessControlAllowOrigin::Any);
         res.set(nickel::mimes::MediaType::Json);
 
         let result = match doc.run_mecab() {
             Ok(v) => QueryResponse::ok(v),
-            Err(_) => QueryResponse::error("mecab run"),
+            Err(e) => QueryResponse::error(e),
         };
 
 
@@ -147,7 +151,7 @@ fn main() {
         json::encode(&result).unwrap()
     });
 
-    server.listen("127.0.0.1:8888");
+    server.listen("192.168.0.123:8888");
 }
 
 

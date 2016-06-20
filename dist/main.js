@@ -257,19 +257,7 @@
 	        var _this4 = _possibleConstructorReturn(this, Object.getPrototypeOf(App).call(this));
 
 	        _this4.state = {
-	            value: default_string, words: [{
-	                hinshi: "名詞",
-	                yomi: "ようじょ",
-	                kihonkei: "ようじょりあん",
-	                tango: "幼女",
-	                id: 1
-	            }, {
-	                hinshi: "女子",
-	                yomi: "は",
-	                kihonkei: "は",
-	                tango: "は",
-	                id: 2
-	            }]
+	            value: default_string, words: []
 	        };
 	        _this4.handleSubmit = _this4.handleSubmit.bind(_this4);
 	        return _this4;
