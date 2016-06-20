@@ -51,7 +51,7 @@ impl Document {
 
     fn run_mecab(&self) -> Result<Vec<Word>, String> {
         if self.body.len() >= 512 {
-            return Err("too long");
+            return Err(String::from("too long"));
         }
         let mut tagger = mecab::Tagger::new("");
         let mut result = Vec::new();
@@ -129,7 +129,7 @@ fn main() {
 
         let result = match doc.run_mecab() {
             Ok(v) => QueryResponse::ok(v),
-            Err(e) => QueryResponse::error(e),
+            Err(e) => QueryResponse::error(&e),
         };
 
 
